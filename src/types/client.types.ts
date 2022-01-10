@@ -65,4 +65,14 @@ export type TClientTokens = IClientTokenNone | IClientTokenBearer | IClientToken
 
 export interface IClientSettings {
   agent: Agent;
+  cache: boolean;
+  cacheTTL: number;
+}
+
+export interface IGetHttpArgsReturn {
+  rawUrl: string;
+  url: URL;
+  method: string;
+  headers: Record<string, string> | undefined;
+  body: string | Buffer | undefined;
 }

@@ -90,7 +90,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async search(query: string, options: Partial<Tweetv2SearchParams> = {}) {
     const queryParams = { ...options, query };
-    const initialRq = await this.get<Tweetv2SearchResult>('tweets/search/recent', queryParams, { fullResponse: true });
+    const initialRq = await this.get<Tweetv2SearchResult>('tweets/search/recent', queryParams, { fullResponse: true, cache: false });
 
     return new TweetSearchRecentV2Paginator({
       realData: initialRq.data,
@@ -109,7 +109,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async searchAll(query: string, options: Partial<Tweetv2SearchParams> = {}) {
     const queryParams = { ...options, query };
-    const initialRq = await this.get<Tweetv2SearchResult>('tweets/search/all', queryParams, { fullResponse: true });
+    const initialRq = await this.get<Tweetv2SearchResult>('tweets/search/all', queryParams, { fullResponse: true, cache: false });
 
     return new TweetSearchAllV2Paginator({
       realData: initialRq.data,
@@ -186,6 +186,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
     const initialRq = await this.get<TweetV2UserTimelineResult>('users/:id/tweets', options, {
       fullResponse: true,
       params: { id: userId },
+      cache: false,
     });
 
     return new TweetUserTimelineV2Paginator({
@@ -207,6 +208,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
     const initialRq = await this.get<TweetV2UserTimelineResult>('users/:id/mentions', options, {
       fullResponse: true,
       params: { id: userId },
+      cache: false,
     });
 
     return new TweetUserMentionTimelineV2Paginator({
@@ -280,7 +282,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
       return this.get<UserV2TimelineResult>('users/:id/followers', parameters as Partial<UserV2TimelineParams>, { params });
     }
 
-    const initialRq = await this.get<UserV2TimelineResult>('users/:id/followers', parameters as Partial<UserV2TimelineParams>, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('users/:id/followers', parameters as Partial<UserV2TimelineParams>, { fullResponse: true, params, cache: false });
 
     return new UserFollowersV2Paginator({
       realData: initialRq.data,
@@ -307,7 +309,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
       return this.get<UserV2TimelineResult>('users/:id/following', parameters as Partial<UserV2TimelineParams>, { params });
     }
 
-    const initialRq = await this.get<UserV2TimelineResult>('users/:id/following', parameters as Partial<UserV2TimelineParams>, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('users/:id/following', parameters as Partial<UserV2TimelineParams>, { fullResponse: true, params, cache: false });
 
     return new UserFollowingV2Paginator({
       realData: initialRq.data,
@@ -324,7 +326,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async userLikedTweets(userId: string, options: Partial<TweetV2PaginableListParams> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<Tweetv2ListResult>('users/:id/liked_tweets', options, { fullResponse: true, params });
+    const initialRq = await this.get<Tweetv2ListResult>('users/:id/liked_tweets', options, { fullResponse: true, params, cache: false });
 
     return new TweetV2UserLikedTweetsPaginator({
       realData: initialRq.data,
@@ -341,7 +343,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async userBlockingUsers(userId: string, options: Partial<UserV2TimelineParams> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<UserV2TimelineResult>('users/:id/blocking', options, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('users/:id/blocking', options, { fullResponse: true, params, cache: false });
 
     return new UserBlockingUsersV2Paginator({
       realData: initialRq.data,
@@ -358,7 +360,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async userMutingUsers(userId: string, options: Partial<UserV2TimelineParams> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<UserV2TimelineResult>('users/:id/muting', options, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('users/:id/muting', options, { fullResponse: true, params, cache: false });
 
     return new UserMutingUsersV2Paginator({
       realData: initialRq.data,
@@ -385,7 +387,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listsOwned(userId: string, options: Partial<GetListTimelineV2Params> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<ListTimelineV2Result>('users/:id/owned_lists', options, { fullResponse: true, params });
+    const initialRq = await this.get<ListTimelineV2Result>('users/:id/owned_lists', options, { fullResponse: true, params, cache: false });
 
     return new UserOwnedListsV2Paginator({
       realData: initialRq.data,
@@ -402,7 +404,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listMemberships(userId: string, options: Partial<GetListTimelineV2Params> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<ListTimelineV2Result>('users/:id/list_memberships', options, { fullResponse: true, params });
+    const initialRq = await this.get<ListTimelineV2Result>('users/:id/list_memberships', options, { fullResponse: true, params, cache: false });
 
     return new UserListMembershipsV2Paginator({
       realData: initialRq.data,
@@ -419,7 +421,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listFollowed(userId: string, options: Partial<GetListTimelineV2Params> = {}) {
     const params = { id: userId };
-    const initialRq = await this.get<ListTimelineV2Result>('users/:id/followed_lists', options, { fullResponse: true, params });
+    const initialRq = await this.get<ListTimelineV2Result>('users/:id/followed_lists', options, { fullResponse: true, params, cache: false });
 
     return new UserListFollowedV2Paginator({
       realData: initialRq.data,
@@ -436,7 +438,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listTweets(listId: string, options: Partial<TweetV2PaginableListParams> = {}) {
     const params = { id: listId };
-    const initialRq = await this.get<Tweetv2ListResult>('lists/:id/tweets', options, { fullResponse: true, params });
+    const initialRq = await this.get<Tweetv2ListResult>('lists/:id/tweets', options, { fullResponse: true, params, cache: false });
 
     return new TweetV2ListTweetsPaginator({
       realData: initialRq.data,
@@ -453,7 +455,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listMembers(listId: string, options: Partial<UserV2TimelineParams> = {}) {
     const params = { id: listId };
-    const initialRq = await this.get<UserV2TimelineResult>('lists/:id/members', options, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('lists/:id/members', options, { fullResponse: true, params, cache: false });
 
     return new UserListMembersV2Paginator({
       realData: initialRq.data,
@@ -470,7 +472,7 @@ export default class TwitterApiv2ReadOnly extends TwitterApiSubClient {
    */
   public async listFollowers(listId: string, options: Partial<UserV2TimelineParams> = {}) {
     const params = { id: listId };
-    const initialRq = await this.get<UserV2TimelineResult>('lists/:id/followers', options, { fullResponse: true, params });
+    const initialRq = await this.get<UserV2TimelineResult>('lists/:id/followers', options, { fullResponse: true, params, cache: false });
 
     return new UserListFollowersV2Paginator({
       realData: initialRq.data,

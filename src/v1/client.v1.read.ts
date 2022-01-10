@@ -119,7 +119,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<TweetV1TimelineResult>('statuses/home_timeline.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<TweetV1TimelineResult>('statuses/home_timeline.json', queryParams, { fullResponse: true, cache: false });
 
     return new HomeTimelineV1Paginator({
       realData: initialRq.data,
@@ -139,7 +139,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<TweetV1TimelineResult>('statuses/mentions_timeline.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<TweetV1TimelineResult>('statuses/mentions_timeline.json', queryParams, { fullResponse: true, cache: false });
 
     return new MentionTimelineV1Paginator({
       realData: initialRq.data,
@@ -160,7 +160,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       user_id: userId,
       ...options,
     };
-    const initialRq = await this.get<TweetV1TimelineResult>('statuses/user_timeline.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<TweetV1TimelineResult>('statuses/user_timeline.json', queryParams, { fullResponse: true, cache: false });
 
     return new UserTimelineV1Paginator({
       realData: initialRq.data,
@@ -181,7 +181,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       screen_name: username,
       ...options,
     };
-    const initialRq = await this.get<TweetV1TimelineResult>('statuses/user_timeline.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<TweetV1TimelineResult>('statuses/user_timeline.json', queryParams, { fullResponse: true, cache: false });
 
     return new UserTimelineV1Paginator({
       realData: initialRq.data,
@@ -230,7 +230,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<MuteUserListV1Result>('mutes/users/list.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<MuteUserListV1Result>('mutes/users/list.json', queryParams, { fullResponse: true, cache: false });
 
     return new MuteUserListV1Paginator({
       realData: initialRq.data,
@@ -249,7 +249,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       stringify_ids: true,
       ...options,
     };
-    const initialRq = await this.get<MuteUserIdsV1Result>('mutes/users/ids.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<MuteUserIdsV1Result>('mutes/users/ids.json', queryParams, { fullResponse: true, cache: false });
 
     return new MuteUserIdsV1Paginator({
       realData: initialRq.data,
@@ -270,7 +270,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       page: 1,
       ...options,
     };
-    const initialRq = await this.get<UserV1[]>('users/search.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<UserV1[]>('users/search.json', queryParams, { fullResponse: true, cache: false });
 
     return new UserSearchV1Paginator({
       realData: initialRq.data,
@@ -315,7 +315,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       stringify_ids: true,
       ...options,
     };
-    const initialRq = await this.get<FriendshipsIncomingV1Result>('friendships/incoming.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<FriendshipsIncomingV1Result>('friendships/incoming.json', queryParams, { fullResponse: true, cache: false });
 
     return new FriendshipsIncomingV1Paginator({
       realData: initialRq.data,
@@ -334,7 +334,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       stringify_ids: true,
       ...options,
     };
-    const initialRq = await this.get<FriendshipsIncomingV1Result>('friendships/outgoing.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<FriendshipsIncomingV1Result>('friendships/outgoing.json', queryParams, { fullResponse: true, cache: false });
 
     return new FriendshipsOutgoingV1Paginator({
       realData: initialRq.data,
@@ -391,7 +391,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<DoubleEndedUsersCursorV1Result>('lists/members.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<DoubleEndedUsersCursorV1Result>('lists/members.json', queryParams, { fullResponse: true, cache: false});
 
     return new ListMembersV1Paginator({
       realData: initialRq.data,
@@ -419,7 +419,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/memberships.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/memberships.json', queryParams, { fullResponse: true, cache: false });
 
     return new ListMembershipsV1Paginator({
       realData: initialRq.data,
@@ -438,7 +438,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/ownerships.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/ownerships.json', queryParams, { fullResponse: true, cache: false });
 
     return new ListOwnershipsV1Paginator({
       realData: initialRq.data,
@@ -457,7 +457,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<TweetV1TimelineResult>('lists/statuses.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<TweetV1TimelineResult>('lists/statuses.json', queryParams, { fullResponse: true, cache: false });
 
     return new ListTimelineV1Paginator({
       realData: initialRq.data,
@@ -476,7 +476,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<DoubleEndedUsersCursorV1Result>('lists/subscribers.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<DoubleEndedUsersCursorV1Result>('lists/subscribers.json', queryParams, { fullResponse: true, cache: false });
 
     return new ListSubscribersV1Paginator({
       realData: initialRq.data,
@@ -504,7 +504,7 @@ export default class TwitterApiv1ReadOnly extends TwitterApiSubClient {
       tweet_mode: 'extended',
       ...options,
     };
-    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/subscriptions.json', queryParams, { fullResponse: true });
+    const initialRq = await this.get<DoubleEndedListsCursorV1Result>('lists/subscriptions.json', queryParams, { fullResponse: true, cache: false });
 
     return new ListSubscriptionsV1Paginator({
       realData: initialRq.data,

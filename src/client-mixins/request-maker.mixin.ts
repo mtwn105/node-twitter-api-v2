@@ -1,4 +1,4 @@
-import { IClientSettings, TwitterRateLimit, TwitterResponse } from '../types';
+import { IClientSettings, IGetHttpArgsReturn, TwitterRateLimit, TwitterResponse } from '../types';
 import TweetStream from '../stream/TweetStream';
 import type { RequestOptions } from 'https';
 import type { ClientRequestArgs } from 'http';
@@ -7,6 +7,7 @@ import OAuth1Helper from './oauth1.helper';
 import RequestHandlerHelper from './request-handler.helper';
 import RequestParamHelpers from './request-param.helper';
 import { OAuth2Helper } from './oauth2.helper';
+import { TTLCache } from './ttl.cache.helper';
 
 export type TRequestFullData = {
   url: URL,
@@ -41,6 +42,8 @@ export interface IGetHttpRequestArgs {
   enableAuth?: boolean;
   enableRateLimitSave?: boolean;
   timeout?: number;
+  cache?: boolean;
+  cacheTTL?: number;
 }
 
 export interface IGetStreamRequestArgs {
@@ -58,7 +61,7 @@ interface IGetStreamRequestArgsSync {
   autoConnect: false;
 }
 
-export type TCustomizableRequestArgs = Pick<IGetHttpRequestArgs, 'headers' | 'params' | 'forceBodyMode' | 'enableAuth' | 'enableRateLimitSave'>;
+export type TCustomizableRequestArgs = Pick<IGetHttpRequestArgs, 'headers' | 'params' | 'forceBodyMode' | 'enableAuth' | 'enableRateLimitSave' | 'cache' | 'cacheTTL'>;
 
 export abstract class ClientRequestMaker {
   protected _bearerToken?: string;
@@ -72,6 +75,7 @@ export abstract class ClientRequestMaker {
   protected _oauth?: OAuth1Helper;
   protected _rateLimits: { [endpoint: string]: TwitterRateLimit } = {};
   protected _clientSettings: Partial<IClientSettings> = {};
+  protected _clientCache: TTLCache<string, any> = new TTLCache();
 
   protected static readonly BODY_METHODS = new Set(['POST', 'PUT', 'PATCH']);
 
@@ -80,7 +84,7 @@ export abstract class ClientRequestMaker {
   }
 
   /** Send a new request and returns a wrapped `Promise<TwitterResponse<T>`. */
-  send<T = any>(requestParams: IGetHttpRequestArgs) : Promise<TwitterResponse<T>> {
+  async send<T = any>(requestParams: IGetHttpRequestArgs) : Promise<TwitterResponse<T>> {
     const args = this.getHttpRequestArgs(requestParams);
     const options: Partial<ClientRequestArgs> = {
       method: args.method,
@@ -90,17 +94,30 @@ export abstract class ClientRequestMaker {
     };
     const enableRateLimitSave = requestParams.enableRateLimitSave !== false;
 
+    // Compute cache key if cache is enabled
+    const cacheKey = this.getCacheKey(requestParams.cache, args);
+    if (cacheKey && this._clientCache.has(cacheKey)) {
+      return this._clientCache.get(cacheKey)!;
+    }
+
     if (args.body) {
       RequestParamHelpers.setBodyLengthHeader(options, args.body);
     }
 
-    return new RequestHandlerHelper<T>({
+    const request = await new RequestHandlerHelper<T>({
       url: args.url,
       options,
       body: args.body,
       rateLimitSaver: enableRateLimitSave ? this.saveRateLimit.bind(this, args.rawUrl) : undefined,
     })
       .makeRequest();
+
+    // Store current request if cache enabled (and request hasn't failed)
+    if (cacheKey) {
+      this._clientCache.set(cacheKey, request, requestParams.cacheTTL ?? this._clientSettings.cacheTTL ?? 60000);
+    }
+
+    return request;
   }
 
   /**
@@ -202,7 +219,7 @@ export abstract class ClientRequestMaker {
     url, method, query: rawQuery = {},
     body: rawBody = {}, headers,
     forceBodyMode, enableAuth, params,
-  }: IGetHttpRequestArgs) {
+  }: IGetHttpRequestArgs): IGetHttpArgsReturn {
     let body: string | Buffer | undefined = undefined;
     method = method.toUpperCase();
     headers = headers ?? {};
@@ -260,5 +277,26 @@ export abstract class ClientRequestMaker {
       headers,
       body,
     };
+  }
+
+  /* Cache helpers */
+
+  private getCacheKey(requestCacheParams: boolean | undefined, args: IGetHttpArgsReturn) {
+    if (this.isCacheEnabled(requestCacheParams, args.method) && !(args.body instanceof Buffer)) {
+      return args.method + '@' + args.url.toString() + '@' + (args.body || '');
+    }
+    return undefined;
+  }
+
+  private isCacheEnabled(requestCacheParams: boolean | undefined, method: string) {
+    // If local true: Always active, if local false: Always inactive
+    // If not specified: Apply default settings if method === 'GET', otherwise disable cache
+    if (typeof requestCacheParams === 'boolean') {
+      return requestCacheParams;
+    }
+    if (this._clientSettings.cache && method === 'GET') {
+      return true;
+    }
+    return false;
   }
 }
