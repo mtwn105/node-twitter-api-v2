@@ -263,7 +263,8 @@ export class RequestHandlerHelper<T> {
 
     // Handle bad error codes
     const code = this.res.statusCode!;
-    if (code >= 400) {
+    // Added exception for code 429 - Too many requests
+    if (code >= 400 && code != 429) {
       reject(this.createResponseError({ data, res: this.res, rateLimit, code }));
       return;
     }
